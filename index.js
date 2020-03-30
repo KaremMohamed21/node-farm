@@ -7,6 +7,10 @@ const tempOverview = fs.readFileSync('./templates/template-overview.html', 'utf-
 const tempCard = fs.readFileSync('./templates/template-card.html', 'utf-8');
 const tempProduct = fs.readFileSync('./templates/template-product.html', 'utf-8');
 
+// Render API
+const data = fs.readFileSync("./dev-data/data.json", "utf-8");
+const dataObj = JSON.parse(data);
+
 // Template Replace
 const templateReplace = (temp, product) => {
   let output = temp.replace(/{%PRODUCT_NAME%}/g, product.productName);
@@ -16,12 +20,11 @@ const templateReplace = (temp, product) => {
   output = output.replace(/{%NUTRIENTS%}/g, product.nutrients);
   output = output.replace(/{%QUANTITY%}/g, product.quantity);
   output = output.replace(/{%PRICE%}/g, product.price);
+  output = output.replace(/{%DESCRIPTION%}/g, product.description);
 
+  if(!product.organic) output = output.replace(/{%NOT_ORGANIC%}/g, 'not-organic');
+  return output;
 }
-
-// Render API
-const data = fs.readFileSync("./dev-data/data.json", "utf-8");
-const dataObj = JSON.parse(data);
 
 // Create A server
 const server = http.createServer((req, res) => {
@@ -30,8 +33,12 @@ const server = http.createServer((req, res) => {
   // Routing
     // Overview
   if (pathName === "/" || pathName === "/overview") {
+    res.writeHead(200, {
+      'content-type': 'text/html'
+    });
     const tempHtml = dataObj.map(el => templateReplace(tempCard, el));
-    res.end(tempOverview);
+
+    res.end(tempOverview)
 
     // Product Details
   } else if (pathName === "/product") {
@@ -55,6 +62,6 @@ const server = http.createServer((req, res) => {
 });
 
 // Lister to server
-server.listen(3000, "127.0.0.1", () => {
-  console.log("server Will be listening on port 3000");
+server.listen(4000, "127.0.0.1", () => {
+  console.log("server Will be listening on port 4000");
 });

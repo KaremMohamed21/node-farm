@@ -36,9 +36,10 @@ const server = http.createServer((req, res) => {
     res.writeHead(200, {
       'content-type': 'text/html'
     });
-    const tempHtml = dataObj.map(el => templateReplace(tempCard, el));
 
-    res.end(tempOverview)
+    const tempHtml = dataObj.map(el => templateReplace(tempCard, el)).join();
+    const output = tempOverview.replace('{%PRODUCT_CARD%}', tempHtml);
+    res.end(output);
 
     // Product Details
   } else if (pathName === "/product") {
@@ -57,7 +58,7 @@ const server = http.createServer((req, res) => {
       "content-type": "text/html",
       "my-own-header": "kareem"
     });
-    res.end("<h1>404: Page not found!</h1>");
+    res.end("<h1>Error 404: Page not found!</h1>");
   }
 });
 

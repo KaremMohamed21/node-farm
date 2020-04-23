@@ -1,32 +1,36 @@
 const fs = require("fs");
 const http = require("http");
 const url = require("url");
-const templateReplace = require("./modules/templateReplace")
+const templateReplace = require("./modules/templateReplace");
 
 // Render Html Templates
-const tempOverview = fs.readFileSync('./templates/template-overview.html', 'utf-8');
-const tempCard = fs.readFileSync('./templates/template-card.html', 'utf-8');
-const tempProduct = fs.readFileSync('./templates/template-product.html', 'utf-8');
+const tempOverview = fs.readFileSync(
+  "./templates/template-overview.html",
+  "utf-8"
+);
+const tempCard = fs.readFileSync("./templates/template-card.html", "utf-8");
+const tempProduct = fs.readFileSync(
+  "./templates/template-product.html",
+  "utf-8"
+);
 
 // Render API
 const data = fs.readFileSync("./dev-data/data.json", "utf-8");
 const dataObj = JSON.parse(data);
 
-
 // Create A server
 const server = http.createServer((req, res) => {
-
   const { query, pathname } = url.parse(req.url, true);
 
-  // Routing
-    // Overview
+  // Router
+  // Overview
   if (pathname === "/" || pathname === "/overview") {
     res.writeHead(200, {
-      'content-type': 'text/html'
+      "content-type": "text/html"
     });
 
     const tempHtml = dataObj.map(el => templateReplace(tempCard, el)).join();
-    const output = tempOverview.replace('{%PRODUCT_CARD%}', tempHtml);
+    const output = tempOverview.replace("{%PRODUCT_CARD%}", tempHtml);
     res.end(output);
 
     // Product Details
@@ -57,6 +61,6 @@ const server = http.createServer((req, res) => {
 });
 
 // Lister to server
-server.listen(4000, "127.0.0.1", () => {
-  console.log("server Will be listening on port 4000");
+server.listen(8000, "127.0.0.1", () => {
+  console.log("server Will be listening on port 8000");
 });
